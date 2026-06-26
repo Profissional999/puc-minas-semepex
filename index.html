@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAFE Ponte Rolante Challenge</title>
+
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #0b0f17, #131a26);
+            --panel-bg: rgba(22, 30, 43, 0.7);
+            --panel-border: rgba(255, 255, 255, 0.08);
+            --accent-yellow: #ffc107;
+            --accent-orange: #ff7600;
+            --success-green: #10b981;
+            --error-red: #ef4444;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg-gradient);
+            color: var(--text-main);
+            overflow-x: hidden;
+            text-align: center;
+            min-height: 100vh;
+        }
+
+        /* HEADER */
+        .header {
+            background: rgba(11, 15, 23, 0.8);
+            backdrop-filter: blur(12px);
+            padding: 24px 20px;
+            border-bottom: 1px solid var(--panel-border);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            background: linear-gradient(45deg, var(--accent-yellow), #ffe082);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            margin-top: 6px;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 600;
+        }
+
+        /* CARD CRISTALIZADO (GLASSMORPHISM) */
+        .card {
+            width: 90%;
+            max-width: 480px;
+            margin: 40px auto;
+            background: var(--panel-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: 24px;
+            padding: 35px;
+            border: 1px solid var(--panel-border);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            box-sizing: border-box;
+        }
+
+        .card h2 {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        /* INPUTS & SELECTS */
+        input, select {
+            width: 100%;
+            padding: 16px;
+            margin: 12px 0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 14px;
+            background: rgba(11, 15, 23, 0.6);
+            color: white;
+            font-size: 16px;
+            transition: all 0.3s;
+            box-sizing: border-box;
+            outline: none;
+        }
+
+        input:focus, select:focus {
+            border-color: var(--accent-yellow);
+            box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.2);
+            background: rgba(11, 15, 23, 0.9);
+        }
+
+        /* BOTÕES CONTEMPORÂNEOS */
+        button {
+            width: 100%;
+            background: linear-gradient(135deg, var(--accent-yellow), var(--accent-orange));
+            border: none;
+            padding: 16px 30px;
+            border-radius: 14px;
+            font-weight: 700;
+            color: #0b0f17;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 16px;
+            margin-top: 15px;
+            box-shadow: 0 4px 15px rgba(255, 166, 0, 0.3);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 166, 0, 0.4);
+            filter: brightness(1.1);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        /* RESPOSTAS (GRID/LISTA DINÂMICA) */
+        .answer {
+            width: 100%;
+            margin: 14px 0;
+            padding: 18px;
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            cursor: pointer;
+            transition: all 0.25s ease;
+            text-align: left;
+            font-size: 15px;
+            font-weight: 500;
+            box-sizing: border-box;
+        }
+
+        .answer:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateX(4px);
+        }
+
+        .correct {
+            background: var(--success-green) !important;
+            border-color: transparent !important;
+            color: white !important;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+        }
+
+        .wrong {
+            background: var(--error-red) !important;
+            border-color: transparent !important;
+            color: white !important;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
+        }
+
+        /* TIMER & PROGRESS BAR */
+        .progress {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            margin-top: 25px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 100%;
+            background: linear-gradient(90deg, var(--accent-yellow), var(--accent-orange));
+            border-radius: 10px;
+            transition: width 1s linear;
+        }
+
+        /* HUD METRICS */
+        .hud {
+            display:flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            font-size: 14px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .hud span {
+            color: var(--text-main);
+            font-weight: 700;
+        }
+
+        /* BADGES / MEDALHAS */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 14px;
+            background: rgba(255, 193, 7, 0.1);
+            border: 1px solid rgba(255, 193, 7, 0.25);
+            border-radius: 100px;
+            margin: 6px;
+            color: var(--accent-yellow);
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        /* CLASSE AUXILIAR */
+        .hidden {
+            display: none !important;
+        }
+
+        /* EFEITOS DINÂMICOS */
+        .correctFlash {
+            animation: correctPulse 0.5s ease;
+        }
+
+        @keyframes correctPulse {
+            0% { background: #0b0f17; }
+            50% { background: #062419; }
+            100% { background: #0b0f17; }
+        }
+
+        .errorShake {
+            animation: errorShake 0.4s ease-in-out;
+        }
+
+        @keyframes errorShake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-8px); }
+            40%, 80% { transform: translateX(8px); }
+        }
+
+        .fallEffect {
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(circle, rgba(239, 68, 68, 0.15) 0%, rgba(0,0,0,0) 70%);
+            border: 4px solid rgba(239, 68, 68, 0.3);
+            animation: fallFlash 0.5s ease-out forwards;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        @keyframes fallFlash {
+            0% { opacity: 0; }
+            50% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); filter: blur(4px); }
+            to { opacity: 1; transform: translateY(0); filter: blur(0); }
+        }
+
+        /* RELATÓRIO FINAL */
+        .report-card {
+            text-align: left;
+            margin-top: 16px;
+            background: rgba(255, 255, 255, 0.02);
+            padding: 20px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .secondary-btn {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: var(--text-main);
+            box-shadow: none;
+        }
+        
+        .secondary-btn:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.3);
+            box-shadow: none;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="header">
+    <div class="logo">
+        🏗️ SAFE Ponte Rolante Challenge
+    </div>
+    <div class="subtitle">
+        NR-11 • Movimentação de Cargas • Profissional Safe
+    </div>
+</div>
+
+<!-- MENU -->
+<div class="card" id="menu">
+    <h2>Treinamento Industrial Gamificado</h2>
+    <p style="color: var(--text-muted); font-size: 15px; line-height: 1.6; margin-bottom: 25px;">
+        Teste seus conhecimentos operacionais em ponte rolante, conformidade com a NR-11 e movimentação segura de cargas industriais.
+    </p>
+
+    <input type="text" id="name" placeholder="Nome do operador">
+    
+    <select id="sector">
+        <option>Operador</option>
+        <option>Sinaleiro</option>
+        <option>Supervisor</option>
+        <option>Manutenção</option>
+        <option>Técnico de Segurança</option>
+    </select>
+
+    <button onclick="startGame()">
+        ▶ INICIAR TREINAMENTO
+    </button>
+</div>
+
+<!-- QUIZ -->
+<div class="card hidden" id="quiz">
+    <div class="badge">
+        🚨 Operação Segura
+    </div>
+
+    <h2 id="question" style="margin-top: 15px; min-height: 60px; font-size: 20px;"></h2>
+
+    <div id="answers"></div>
+
+    <div class="progress">
+        <div class="progress-bar" id="timeBar"></div>
+    </div>
+
+    <div class="hud">
+        <div>⏱️ Tempo: <span id="time">10</span>s</div>
+        <div>🏆 Pontos: <span id="score">0</span></div>
+    </div>
+</div>
+
+<!-- RESULT -->
+<div class="card hidden" id="result">
+    <h1 style="font-size: 26px; font-weight: 800; margin-bottom: 5px;">📋 Relatório Operacional</h1>
+    <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 25px;">Resultado de avaliação técnica</p>
+
+    <h2 id="finalText" style="font-size: 18px; line-height: 1.6;"></h2>
+
+    <div id="badges" style="margin: 20px 0;"></div>
+
+    <div id="report"></div>
+
+    <button onclick="window.print()" style="margin-top: 30px;">
+        🖨️ Imprimir Relatório
+    </button>
+
+    <button onclick="location.reload()" class="secondary-btn">
+        🔄 Novo Operador
+    </button>
+</div>
+
+<script>
+const questions = [
+    { q:"Posso usar célula de carga para descobrir o peso de uma carga desconhecida?", a:["Sim, é permitido", "Não, o peso deve ser previamente conhecido", "Somente em cargas pequenas"], c:1 },
+    { q:"Em uma atividade de ponte rolante, posso içar cargas sem plano de carga ou plano de rigging?", a:["Sim", "Somente com autorização verbal", "Não, toda atividade deve possuir plano"], c:2 },
+    { q:"Durante um içamento percebo que as cintas não são adequadas para a carga. O que devo fazer?", a:["Continuar rapidamente", "Improvisar outra amarração", "Paralisar a atividade e corrigir"], c:2 },
+    { q:"É correto utilizar ponte rolante para içar pessoas?", a:["Sim", "Somente em manutenção", "Não, salvo equipamento fabricado para este fim"], c:2 },
+    { q:"O que é obrigatório para operar uma ponte rolante?", a:["Capacitação e treinamento", "Apenas experiência prática", "Autorização verbal"], c:0 },
+    { q:"Qual procedimento seguimos para operação de ponte rolante?", a:["Procedimento de movimentação de cargas e NR-11", "Apenas NR-35", "Somente orientação verbal"], c:0 },
+    { q:"É permitido movimentar carga sobre pessoas?", a:["Sim", "Não", "Somente rapidamente"], c:1 },
+    { q:"Quem o operador deve obedecer durante o içamento?", a:["Qualquer colaborador", "O sinaleiro designado", "Somente o supervisor"], c:1 },
+    { q:"Quando não houver contato visual com o sinaleiro:", a:["Continuar normalmente", "Utilizar rádio em faixa exclusiva", "Cancelar operação imediatamente"], c:1 },
+    { q:"É permitido utilizar equipamentos improvisados para amarração?", a:["Sim", "Não", "Somente em emergência"], c:1 },
+    { q:"Durante o içamento é permitido fumar ou utilizar celular?", a:["Sim", "Não", "Somente em cargas leves"], c:1 },
+    { q:"O operador pode abandonar o comando com carga suspensa?", a:["Sim", "Não", "Somente por poucos segundos"], c:1 },
+    { q:"É permitido balançar a carga para posicionamento?", a:["Sim", "Não", "Somente com corda guia"], c:1 },
+    { q:"Em caso de emergência é necessário:", a:["Manter carga suspensa", "Apoiar carga no piso e isolar área", "Somente desligar equipamento"], c:1 },
+    { q:"Qual prática é recomendada para controlar a carga?", a:["Uso de corda guia", "Aumento da velocidade", "Movimentação brusca"], c:0 },
+    { q:"A reciclagem do treinamento deve ocorrer:", a:["A cada 2 anos", "A cada 10 anos", "Somente após acidente"], c:0 },
+    { q:"É permitido içar carga com peso desconhecido?", a:["Sim", "Não", "Somente com autorização"], c:1 },
+    { q:"O trajeto da carga deve estar:", a:["Parcialmente livre", "Totalmente desobstruído", "Sem necessidade de isolamento"], c:1 },
+    { q:"O que deve existir obrigatoriamente nos ganchos:", a:["Trava de segurança", "Pintura refletiva", "Etiqueta simples"], c:0 },
+    { q:"Cargas instáveis devem:", a:["Ser içadas rapidamente", "Não ser levantadas", "Ser balançadas"], c:1 }
+];
+
+let current = 0;
+let score = 0;
+let time = 10;
+let timer;
+let report = [];
+
+function startGame(){
+    document.getElementById("menu").classList.add("hidden");
+    document.getElementById("quiz").classList.remove("hidden");
+    showQuestion();
+}
+
+function showQuestion(){
+    if(current >= questions.length){
+        endGame();
+        return;
+    }
+
+    time = 10;
+    updateBar();
+    document.getElementById("time").innerText = time;
+
+    let q = questions[current];
+    document.getElementById("question").innerText = q.q;
+
+    let html = "";
+    q.a.forEach((option, index) => {
+        html += `<div class='answer' onclick='answer(this,${index})'>${option}</div>`;
+    });
+    document.getElementById("answers").innerHTML = html;
+
+    timer = setInterval(() => {
+        time--;
+        document.getElementById("time").innerText = time;
+        updateBar();
+
+        if(time <= 0){
+            clearInterval(timer);
+            answer(null, -1);
+        }
+    }, 1000);
+}
+
+function updateBar(){
+    document.getElementById("timeBar").style.width = (time * 10) + "%";
+}
+
+function answer(el, index){
+    clearInterval(timer);
+    let q = questions[current];
+    let buttons = document.querySelectorAll(".answer");
+
+    if(index === q.c){
+        score += time * 10;
+        if(el) el.classList.add("correct");
+        document.body.classList.add("correctFlash");
+        setTimeout(() => document.body.classList.remove("correctFlash"), 500);
+    } else {
+        if(el) el.classList.add("wrong");
+        buttons[q.c].classList.add("correct");
+        document.body.classList.add("errorShake");
+
+        const effect = document.createElement("div");
+        effect.className = "fallEffect";
+        document.body.appendChild(effect);
+
+        navigator.vibrate?.([200, 100, 200]);
+
+        setTimeout(() => document.body.classList.remove("errorShake"), 400);
+        setTimeout(() => effect.remove(), 500);
+    }
+
+    document.getElementById("score").innerText = score;
+
+    report.push({
+        pergunta: q.q,
+        resposta: q.a[index] || "Tempo Expirado",
+        correta: q.a[q.c]
+    });
+
+    current++;
+    setTimeout(showQuestion, 1200);
+}
+
+function endGame(){
+    document.getElementById("quiz").classList.add("hidden");
+    document.getElementById("result").classList.remove("hidden");
+
+    let operator = document.getElementById("name").value || "Operador Anônimo";
+    let sector = document.getElementById("sector").value;
+    let level = "";
+    let medals = "";
+
+    if(score >= 1200){
+        level = "<span style='color:var(--accent-yellow); font-weight:800;'>🏆 OPERADOR ELITE SAFE</span>";
+        medals = `
+            <div class='badge'>🥇 Zero Colisão</div>
+            <div class='badge'>🏗️ Operador Seguro</div>
+            <div class='badge'>⚠️ Especialista NR-11</div>
+            <div class='badge'>🚧 Mestre do Içamento</div>
+        `;
+    } else if(score >= 700){
+        level = "<span style='color:#60a5fa; font-weight:800;'>⚙️ OPERADOR QUALIFICADO</span>";
+        medals = `
+            <div class='badge'>🏗️ Operador Seguro</div>
+            <div class='badge'>⚠️ Boa Performance</div>
+        `;
+    } else {
+        level = "<span style='color:var(--error-red); font-weight:800;'>📚 NECESSITA RECICLAGEM</span>";
+        medals = `<div class='badge' style='color:var(--error-red); background:rgba(239,68,68,0.1); border-color:rgba(239,68,68,0.2)'>⚠️ Reciclagem Recomendada</div>`;
+    }
+
+    document.getElementById("finalText").innerHTML = `
+        Operador: <b>${operator}</b> (${sector})<br>
+        Pontuação Final: <span style='font-size:24px; color:var(--accent-yellow); font-weight:800;'>${score}</span><br><br>
+        Status: ${level}
+    `;
+
+    document.getElementById("badges").innerHTML = medals;
+
+    let html = "<h3 style='margin-top:30px; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:10px;'>Checklist Operacional</h3>";
+    report.forEach(item => {
+        html += `
+        <div class="report-card">
+            <b style="font-size:14px; display:block; margin-bottom:10px;">${item.pergunta}</b>
+            <div style="font-size:13px; margin:4px 0;">Sua resposta: <span style='color:#fbcfe8; font-weight:600;'>${item.resposta}</span></div>
+            <div style="font-size:13px; margin:4px 0;">Correta: <span style='color:#a7f3d0; font-weight:600;'>${item.correta}</span></div>
+        </div>
+        `;
+    });
+    document.getElementById("report").innerHTML = html;
+}
+</script>
+
+</body>
+</html>
