@@ -1,0 +1,21 @@
+CONFIGURAÇÃO DA PESQUISA COMPARTILHADA — PUC MINAS SERRO
+
+Para reunir as respostas de todos os visitantes, o HTML precisa ser conectado a uma planilha Google. O HTML sozinho não consegue compartilhar respostas entre dispositivos.
+
+1. Crie uma planilha nova no Google Sheets.
+2. Na planilha, vá em Extensões > Apps Script.
+3. Abra o arquivo backend_respostas_mariana_ferrer.gs, copie todo o conteúdo e cole no editor Apps Script.
+4. No Apps Script, abra Configurações do projeto > Propriedades do script e adicione:
+   Nome: ACCESS_PASSWORD
+   Valor: PÃE2026
+5. Clique em Implantar > Nova implantação > Aplicativo da Web. Escolha “Executar como: eu” e “Quem pode acessar: qualquer pessoa”. Confirme a implantação.
+6. Copie a URL terminada em /exec.
+7. No HTML, procure a linha: const API_URL = 'COLE_AQUI_A_URL_DO_WEB_APP';
+   Substitua o texto dentro das aspas pela URL que copiou. Salve e publique o HTML atualizado.
+8. Faça um teste enviando uma resposta pelo site e depois abra “Resultados”, digitando a senha PÃE2026.
+
+IMPORTANTE SOBRE PRIVACIDADE E SENHA
+- A pesquisa não solicita nome, e-mail ou outro dado pessoal.
+- A senha é validada no Apps Script, não no HTML. Ainda assim, este modelo simples é adequado apenas para respostas acadêmicas não sensíveis; não o use para informações confidenciais.
+- Como o acesso do Web App permite enviar respostas anonimamente, evite compartilhar a URL de implantação publicamente além do próprio site. Se precisar de segurança mais forte, use autenticação de conta Google e restrinja o acesso à planilha.
+- A senha PÃE2026 diferencia maiúsculas/minúsculas e deve ser digitada exatamente assim.
